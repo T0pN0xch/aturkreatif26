@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ctf-app-dev:
+    build:
+      context: ./ctf-platform
+      dockerfile: Dockerfile.dev
+    container_name: akctf-platform-dev
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - SECRET_KEY=dev-secret-key
+      - DATABASE_URL=sqlite:///ctf.db
+      - WRITEUP_PASSWORD=admin
+    volumes:
+      - ./ctf-platform:/app
+      - /app/__pycache__
+    networks:
+      - ctf-network
+    restart: unless-stopped
+
+networks:
+  ctf-network:
+    driver: bridge

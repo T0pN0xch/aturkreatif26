@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ATURKREATIF 26 WORKSHOP{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes scoreGlow {
+        0%, 100% { box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2), inset 0 0 10px rgba(0, 51, 255, 0.1); }
+        50% { box-shadow: 6px 6px 0px rgba(0, 51, 255, 0.3), inset 0 0 10px rgba(0, 51, 255, 0.15); }
+    }
+    
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dashboard-header h1 {
+        animation: slideIn 0.6s ease-out;
+        color: var(--bright-red);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .dashboard-header h1::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .dashboard-header p {
+        color: var(--bright-red);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .score-box {
+        background: var(--white);
+        color: var(--bright-red);
+        padding: 2rem;
+        border-radius: 0;
+        text-align: center;
+        min-width: 200px;
+        border: 3px solid var(--bright-red);
+        border-top: 6px solid var(--bright-blue);
+        animation: scoreGlow 3s ease-in-out infinite;
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .score-box h2 {
+        color: var(--bright-red);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .score-box h2::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .score-value {
+        font-size: 3.5rem;
+        font-weight: bold;
+        font-family: 'Orbitron', sans-serif;
+        color: var(--bright-blue);
+    }
+    
+    .challenges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .challenge-card {
+        background: var(--white);
+        border-radius: 0;
+        border: 3px solid var(--bright-red);
+        border-left: 6px solid var(--bright-blue);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.1);
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .challenge-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 6px 6px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .challenge-card.solved {
+        border-top: 6px solid #2ecc71;
+    }
+    
+    .challenge-card.attempted {
+        border-top: 6px solid #ffaa00;
+    }
+    
+    .challenge-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .challenge-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin: 0;
+        color: var(--bright-red);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .challenge-title::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .challenge-points {
+        background: rgba(46, 204, 113, 0.1);
+        color: #1e7e34;
+        padding: 0.4rem 1rem;
+        border-radius: 0;
+        font-weight: bold;
+        white-space: nowrap;
+        box-shadow: 2px 2px 0px rgba(46, 204, 113, 0.3);
+        border: 2px solid #2ecc71;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+    }
+    
+    .challenge-category {
+        display: inline-block;
+        background: rgba(0, 51, 255, 0.1);
+        color: var(--bright-blue);
+        padding: 0.3rem 0.85rem;
+        border-radius: 0;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+        border: 2px solid var(--bright-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .challenge-description {
+        color: var(--dark-text);
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .challenge-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--bright-red);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0;
+        font-size: 0.85rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 2px solid;
+        box-shadow: 2px 2px 0px;
+    }
+    
+    .status-solved {
+        background: rgba(46, 204, 113, 0.1);
+        color: #1e7e34;
+        border-color: #2ecc71;
+        box-shadow: 2px 2px 0px rgba(46, 204, 113, 0.3);
+    }
+    
+    .status-attempted {
+        background: rgba(255, 170, 0, 0.1);
+        color: var(--bright-red);
+        border-color: #ffaa00;
+        box-shadow: 2px 2px 0px rgba(255, 170, 0, 0.3);
+    }
+    
+    .view-btn {
+        padding: 0.5rem 1.2rem;
+        background: linear-gradient(135deg, var(--bright-red) 0%, var(--primary-red) 100%);
+        color: var(--white);
+        text-decoration: none;
+        border-radius: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 2px solid var(--bright-red);
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.2);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .view-btn:hover {
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.3), 0 0 15px rgba(160, 38, 43, 0.3);
+        transform: translate(-2px, -2px);
+    }
+    
+    .view-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 0 0 0px rgba(0, 51, 255, 0.3);
+    }
+    
+    .no-challenges {
+        text-align: center;
+        padding: 3rem;
+        color: var(--dark-text);
+        font-style: italic;
+    }
+    
+    .category-section {
+        margin-bottom: 3rem;
+    }
+    
+    .category-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--bright-blue);
+    }
+    
+    .category-header h3 {
+        color: var(--bright-red);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 0;
+        font-weight: bold;
+    }
+    
+    .category-header h3::before {
+        content: '█ ';
+        color: var(--bright-blue);
+        margin-right: 0.5rem;
+    }
+    
+    .category-badge {
+        background: linear-gradient(135deg, var(--bright-blue) 0%, #0025cc 100%);
+        color: var(--white);
+        padding: 0.5rem 1.2rem;
+        border-radius: 0;
+        font-weight: bold;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 3px 3px 0px rgba(0, 51, 255, 0.3);
+        border: 2px solid var(--bright-blue);
+    }
+    
+    .category-count {
+        margin-left: auto;
+        color: var(--bright-red);
+        font-weight: bold;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Welcome, {{ current_user.username }}!</h1>
+        {% if current_user.team_name %}
+        <p style="margin-top: 0.5rem;">Team: <strong>{{ current_user.team_name }}</strong></p>
+        {% endif %}
+    </div>
+    <div class="score-box">
+        <h2>Your Score</h2>
+        <div class="score-value">{{ score }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Available Challenges ({{ challenges|length }})</h2>
+    
+    {% if challenges %}
+        {% set categories = {} %}
+        {% for challenge in challenges %}
+            {% if challenge.category not in categories %}
+                {% set _ = categories.update({challenge.category: []}) %}
+            {% endif %}
+            {% set _ = categories[challenge.category].append(challenge) %}
+        {% endfor %}
+        
+        {% for category in ['General', 'Crypto', 'Web'] %}
+            {% if category in categories %}
+            <div class="category-section">
+                <div class="category-header">
+                    <h3>{{ category }}</h3>
+                    <span class="category-badge">{{ category }}</span>
+                    <span class="category-count">{{ categories[category]|length }} Challenge{% if categories[category]|length != 1 %}s{% endif %}</span>
+                </div>
+                
+                <div class="challenges-grid">
+                    {% for challenge in categories[category] %}
+                    <div class="challenge-card {% if submissions.get(challenge.id) and submissions[challenge.id].is_correct %}solved{% elif submissions.get(challenge.id) %}attempted{% endif %}">
+                        <div class="challenge-header">
+                            <h3 class="challenge-title">{{ challenge.title }}</h3>
+                            <span class="challenge-points">{{ challenge.points }} pts</span>
+                        </div>
+                        
+                        <span class="challenge-category">{{ challenge.category }}</span>
+                        
+                        <p class="challenge-description">{{ challenge.description[:100] }}{% if challenge.description|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="challenge-status">
+                            {% if submissions.get(challenge.id) %}
+                                {% if submissions[challenge.id].is_correct %}
+                                    <span class="status-badge status-solved">✓ SOLVED</span>
+                                {% else %}
+                                    <span class="status-badge status-attempted">⚠ ATTEMPTED</span>
+                                {% endif %}
+                            {% endif %}
+                            <a href="{{ url_for('challenge_detail', challenge_id=challenge.id) }}" class="view-btn">VIEW</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="no-challenges">No challenges available yet. Check back soon!</div>
+    {% endif %}
+</div>
+{% endblock %}

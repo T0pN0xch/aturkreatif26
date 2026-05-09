@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ATURKREATIF 26 - CTF WORKSHOP{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <style>
+        /* ATURKREATIF 2026 Theme Colors */
+        :root {
+            --primary-red: #A0262B;
+            --bright-red: #D42C35;
+            --bright-blue: #0033FF;
+            --light-bg: #f5f5f5;
+            --white: #ffffff;
+            --dark-text: #1a1a1a;
+        }
+        
+        @keyframes scanlines {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 2px; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Mono', 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--dark-text);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Dither Effect Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(160, 38, 43, 0.02) 0px,
+                    rgba(160, 38, 43, 0.02) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 0;
+            animation: scanlines 8s linear infinite;
+        }
+        
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(160, 38, 43, 0.2), 0 0 20px rgba(0, 51, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid var(--bright-red);
+            border-top: 2px solid var(--bright-blue);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav a {
+            color: var(--dark-text);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--bright-red), var(--bright-blue));
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--bright-red);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-brand {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--bright-red);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .nav-brand::before {
+            content: '⌨ ';
+            font-size: 1.8rem;
+            margin-right: 0.5rem;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: 0;
+            box-shadow: 0 4px 12px rgba(160, 38, 43, 0.15);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 3px solid var(--bright-red);
+            border-left: 6px solid var(--bright-blue);
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bright-red);
+            border-radius: 50%;
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bright-blue);
+            border-radius: 50%;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.85rem 1.8rem;
+            background: linear-gradient(135deg, var(--bright-red) 0%, var(--primary-red) 100%);
+            color: var(--white);
+            text-decoration: none;
+            border: 3px solid var(--bright-red);
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover {
+            box-shadow: 6px 6px 0px rgba(0, 51, 255, 0.5), 0 0 20px rgba(160, 38, 43, 0.3);
+            transform: translate(-2px, -2px);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0px rgba(0, 51, 255, 0.3);
+        }
+        
+        .btn-blue {
+            background: linear-gradient(135deg, var(--bright-blue) 0%, #0028cc 100%);
+            border-color: var(--bright-blue);
+            box-shadow: 4px 4px 0px rgba(160, 38, 43, 0.3);
+        }
+        
+        .btn-blue:hover {
+            box-shadow: 6px 6px 0px rgba(160, 38, 43, 0.5), 0 0 20px rgba(0, 51, 255, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-color: #2ecc71;
+            box-shadow: 4px 4px 0px rgba(160, 38, 43, 0.3);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 6px 6px 0px rgba(160, 38, 43, 0.5), 0 0 20px rgba(46, 204, 113, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--bright-red);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--bright-red);
+            border-radius: 0;
+            font-size: 1rem;
+            background: var(--white);
+            color: var(--dark-text);
+            font-family: 'Space Mono', monospace;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.2);
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--bright-blue);
+            box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .alert {
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 0;
+            border-left: 5px solid;
+            border-top: 3px solid;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 600;
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #1e7e34;
+            border-color: #2ecc71;
+            box-shadow: 3px 3px 0px rgba(46, 204, 113, 0.2);
+        }
+        
+        .alert-error {
+            background-color: rgba(208, 44, 53, 0.1);
+            color: var(--primary-red);
+            border-color: var(--bright-red);
+            box-shadow: 3px 3px 0px rgba(208, 44, 53, 0.2);
+        }
+        
+        .alert-info {
+            background-color: rgba(0, 51, 255, 0.1);
+            color: var(--bright-blue);
+            border-color: var(--bright-blue);
+            box-shadow: 3px 3px 0px rgba(0, 51, 255, 0.2);
+        }
+        
+        h1, h2, h3 {
+            color: var(--bright-red);
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', 'Space Mono', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        h1::before {
+            content: '█ ';
+            color: var(--bright-blue);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border: 3px solid var(--bright-red);
+        }
+        
+        table th {
+            background: linear-gradient(135deg, rgba(160, 38, 43, 0.1) 0%, rgba(0, 51, 255, 0.1) 100%);
+            color: var(--bright-red);
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 3px solid var(--bright-red);
+            border-right: 2px solid var(--bright-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        table th:last-child {
+            border-right: none;
+        }
+        
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            color: var(--dark-text);
+        }
+        
+        table td:last-child {
+            border-right: none;
+        }
+        
+        table tr {
+            transition: all 0.3s ease;
+        }
+        
+        table tr:hover {
+            background-color: rgba(0, 51, 255, 0.05);
+            box-shadow: inset 0 0 0 2px rgba(160, 38, 43, 0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 2px solid;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .badge-success {
+            background: rgba(46, 204, 113, 0.1);
+            color: #1e7e34;
+            border-color: #2ecc71;
+            box-shadow: 2px 2px 0px rgba(46, 204, 113, 0.3);
+        }
+        
+        .badge-danger {
+            background: rgba(208, 44, 53, 0.1);
+            color: var(--primary-red);
+            border-color: var(--bright-red);
+            box-shadow: 2px 2px 0px rgba(208, 44, 53, 0.3);
+        }
+        
+        /* Dither graphic decorations */
+        .dither-top {
+            position: fixed;
+            top: 0;
+            right: 0;
+            font-size: 12rem;
+            opacity: 0.05;
+            z-index: 1;
+            pointer-events: none;
+            transform: rotate(-15deg) translate(20%, -10%);
+        }
+        
+        .dither-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            font-size: 15rem;
+            opacity: 0.04;
+            z-index: 1;
+            pointer-events: none;
+            transform: rotate(25deg) translate(-10%, 10%);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Dither Graphics -->
+    <div class="dither-top">⌨</div>
+    <div class="dither-bottom">🖥️</div>
+    
+    <nav>
+        <ul>
+            <li><span class="nav-brand">ATURKREATIF 26</span></li>
+            <li style="flex-grow: 1;"></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('scoreboard') }}">Scoreboard</a></li>
+            {% if current_user.is_admin %}
+            <li><a href="{{ url_for('admin') }}">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+            <li><a href="{{ url_for('scoreboard') }}">Scoreboard</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

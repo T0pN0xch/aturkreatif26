@@ -1,0 +1,679 @@
+{% extends "base.html" %}
+
+{% block title %}{{ challenge.title }} - ATURKREATIF 26 CTF{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes successPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .challenge-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        .challenge-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .challenge-main {
+        background: var(--white);
+        border-radius: 0;
+        border: 3px solid var(--bright-red);
+        border-left: 6px solid var(--bright-blue);
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+        padding: 2.5rem;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .challenge-main h1 {
+        color: var(--bright-red);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .challenge-main h1::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .challenge-sidebar {
+        background: var(--white);
+        border-radius: 0;
+        border: 3px solid var(--bright-red);
+        border-left: 6px solid var(--bright-blue);
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+        padding: 2.5rem;
+        height: fit-content;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .challenge-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .meta-badge {
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 2px solid;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .meta-badge.points {
+        background: rgba(46, 204, 113, 0.1);
+        color: #1e7e34;
+        border-color: #2ecc71;
+    }
+    
+    .meta-badge.category {
+        background: rgba(0, 51, 255, 0.1);
+        color: var(--bright-blue);
+        border-color: var(--bright-blue);
+    }
+    
+    .challenge-description {
+        margin-bottom: 2.5rem;
+        line-height: 1.8;
+        color: var(--dark-text);
+        font-size: 1rem;
+        background: rgba(0, 51, 255, 0.05);
+        padding: 1.5rem;
+        border-radius: 0;
+        border-left: 3px solid var(--bright-red);
+    }
+    
+    .submission-form {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--bright-red);
+    }
+    
+    .submission-form h3 {
+        color: var(--bright-red);
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .submission-form h3::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .flag-input-group {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .flag-input-group input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid var(--bright-red);
+        border-radius: 0;
+        font-size: 1rem;
+        background: var(--white);
+        color: var(--dark-text);
+        font-family: 'Space Mono', monospace;
+        transition: all 0.3s ease;
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.1);
+    }
+    
+    .flag-input-group input:focus {
+        border-color: var(--bright-blue);
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+        outline: none;
+    }
+    
+    .flag-input-group input::placeholder {
+        color: rgba(160, 38, 43, 0.4);
+    }
+    
+    .flag-input-group button {
+        padding: 1rem 1.5rem;
+    }
+    
+    .submission-message {
+        margin-top: 1.5rem;
+        padding: 1.2rem;
+        border-radius: 0;
+        text-align: center;
+        font-weight: bold;
+        border-left: 4px solid;
+        border-top: 2px solid;
+        animation: slideIn 0.4s ease-out;
+    }
+    
+    .submission-success {
+        background: rgba(46, 204, 113, 0.1);
+        color: #1e7e34;
+        border-color: #2ecc71;
+        box-shadow: 2px 2px 0px rgba(46, 204, 113, 0.2);
+        animation: successPulse 0.6s ease-out;
+    }
+    
+    .submission-error {
+        background: rgba(208, 44, 53, 0.1);
+        color: var(--primary-red);
+        border-color: var(--bright-red);
+        box-shadow: 2px 2px 0px rgba(208, 44, 53, 0.2);
+    }
+    
+    .submission-info {
+        background: rgba(0, 51, 255, 0.1);
+        color: var(--bright-blue);
+        border-color: var(--bright-blue);
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .sidebar-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: var(--bright-red);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .sidebar-title::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .status-info {
+        padding: 1.2rem;
+        background: rgba(160, 38, 43, 0.05);
+        border-radius: 0;
+        margin-bottom: 1rem;
+        border: 2px solid var(--bright-red);
+    }
+    
+    .status-label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--primary-red);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
+    
+    .status-value {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--bright-red);
+    }
+    
+    .status-value.solved {
+        color: #1e7e34;
+    }
+    
+    .status-value.attempted {
+        color: var(--bright-red);
+    }
+    
+    .back-button {
+        display: block;
+        width: 100%;
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    
+    /* Writeup Modal Styles */
+    .writeup-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--bright-red);
+    }
+    
+    .writeup-button {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--bright-blue) 0%, #0028cc 100%);
+        border: 3px solid var(--bright-blue);
+        color: var(--white);
+        font-weight: bold;
+        border-radius: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'Space Mono', monospace;
+        box-shadow: 4px 4px 0px rgba(160, 38, 43, 0.3);
+    }
+    
+    .writeup-button:hover {
+        box-shadow: 6px 6px 0px rgba(160, 38, 43, 0.5), 0 0 20px rgba(0, 51, 255, 0.3);
+        transform: translate(-2px, -2px);
+    }
+    
+    .writeup-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .writeup-content {
+        background: var(--white);
+        border: 2px solid var(--bright-blue);
+        border-radius: 0;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        max-height: 600px;
+        overflow-y: auto;
+        color: var(--dark-text);
+        line-height: 1.6;
+        box-shadow: 3px 3px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .writeup-content h2 {
+        color: var(--bright-red);
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .writeup-content h2::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .writeup-content h2:first-child {
+        margin-top: 0;
+    }
+    
+    .writeup-content p {
+        margin-bottom: 0.8rem;
+    }
+    
+    .writeup-content pre {
+        background: #f0f0f0;
+        border: 2px solid var(--bright-red);
+        padding: 1rem;
+        border-radius: 0;
+        overflow-x: auto;
+        margin: 0.8rem 0;
+        color: var(--dark-text);
+        font-family: 'Space Mono', 'Courier Prime', monospace;
+        box-shadow: 2px 2px 0px rgba(160, 38, 43, 0.2);
+    }
+    
+    .writeup-content code {
+        font-family: 'Space Mono', 'Courier Prime', monospace;
+        color: var(--bright-red);
+        background: rgba(160, 38, 43, 0.1);
+        padding: 0.2rem 0.4rem;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(26, 26, 26, 0.7);
+        backdrop-filter: blur(3px);
+    }
+    
+    .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: var(--white);
+        border: 3px solid var(--bright-red);
+        border-top: 6px solid var(--bright-blue);
+        border-radius: 0;
+        padding: 2rem;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 6px 6px 0px rgba(160, 38, 43, 0.3), 0 0 20px rgba(0, 51, 255, 0.2);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    .modal-content h2 {
+        color: var(--bright-red);
+        margin-bottom: 1.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .modal-content h2::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .modal-content p {
+        color: var(--dark-text);
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .modal-input {
+        width: 100%;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 2px solid var(--bright-red);
+        border-radius: 0;
+        font-size: 1rem;
+        background: var(--white);
+        color: var(--dark-text);
+        font-family: 'Space Mono', monospace;
+        transition: all 0.3s ease;
+        box-shadow: 2px 2px 0px rgba(0, 51, 255, 0.1);
+    }
+    
+    .modal-input:focus {
+        outline: none;
+        border-color: var(--bright-blue);
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+    }
+    
+    .modal-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .modal-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Space Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+    
+    .modal-btn-submit {
+        background: linear-gradient(135deg, var(--bright-blue) 0%, #0028cc 100%);
+        color: var(--white);
+        border: 2px solid var(--bright-blue);
+        box-shadow: 3px 3px 0px rgba(160, 38, 43, 0.2);
+    }
+    
+    .modal-btn-submit:hover {
+        box-shadow: 5px 5px 0px rgba(160, 38, 43, 0.3), 0 0 15px rgba(0, 51, 255, 0.3);
+        transform: translate(-2px, -2px);
+    }
+    
+    .modal-btn-cancel {
+        background: rgba(160, 38, 43, 0.1);
+        color: var(--bright-red);
+        border: 2px solid var(--bright-red);
+        box-shadow: 3px 3px 0px rgba(0, 51, 255, 0.1);
+    }
+    
+    .modal-btn-cancel:hover {
+        background: rgba(160, 38, 43, 0.15);
+        box-shadow: 5px 5px 0px rgba(0, 51, 255, 0.2);
+        transform: translate(-2px, -2px);
+    }
+    
+    .modal-error {
+        color: var(--bright-red);
+        text-align: center;
+        margin-top: 0.5rem;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="challenge-container">
+    <div class="challenge-main">
+        <h1>{{ challenge.title }}</h1>
+        
+        <div class="challenge-meta">
+            <span class="meta-badge points">{{ challenge.points }} POINTS</span>
+            <span class="meta-badge category"># {{ challenge.category }}</span>
+        </div>
+        
+        <div class="challenge-description">
+            {{ challenge.description }}
+        </div>
+        
+        {% if submission and submission.is_correct %}
+        <div class="submission-message submission-success">
+            ✓ CHALLENGE SOLVED! - You've already conquered this one!
+        </div>
+        {% else %}
+        <div class="submission-form">
+            <h3>SUBMIT FLAG</h3>
+            <div class="flag-input-group">
+                <input type="text" id="flag-input" placeholder="Enter the flag here..." autocomplete="off">
+                <button type="button" class="btn" onclick="submitFlag()">SUBMIT</button>
+            </div>
+            <div id="message"></div>
+        </div>
+        {% endif %}
+        
+        {% if challenge.writeup %}
+        <div class="writeup-section">
+            <button class="writeup-button" onclick="openWriteupModal()">VIEW WRITEUP (Admin Only)</button>
+            <div id="writeup-content"></div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="challenge-sidebar">
+        <div class="sidebar-title">STATUS</div>
+        
+        {% if submission %}
+            {% if submission.is_correct %}
+            <div class="status-info">
+                <span class="status-label">Challenge Status</span>
+                <div class="status-value solved">✓ SOLVED</div>
+            </div>
+            <div class="status-info">
+                <span class="status-label">Points Earned</span>
+                <div class="status-value">+{{ challenge.points }}</div>
+            </div>
+            <div class="status-info">
+                <span class="status-label">Solved at</span>
+                <div class="status-value" style="font-size: 0.9rem;">{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            </div>
+            {% else %}
+            <div class="status-info">
+                <span class="status-label">Challenge Status</span>
+                <div class="status-value attempted">⚠ ATTEMPTED</div>
+            </div>
+            <div class="status-info">
+                <span class="status-label">Last Attempt</span>
+                <div class="status-value" style="font-size: 0.9rem;">{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="status-info">
+            <span class="status-label">Challenge Status</span>
+            <div class="status-value">NOT ATTEMPTED</div>
+        </div>
+        {% endif %}
+        
+        <div class="back-button">
+            <a href="{{ url_for('dashboard') }}" class="btn">← BACK TO DASHBOARD</a>
+        </div>
+    </div>
+</div>
+
+<!-- Writeup Password Modal -->
+<div id="writeupModal" class="modal">
+    <div class="modal-content">
+        <h2>WRITEUP ACCESS</h2>
+        <p>Enter the admin password to view the writeup:</p>
+        <input type="password" id="writeup-password" class="modal-input" placeholder="Admin password" onkeypress="if(event.key==='Enter') submitWriteup()">
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-submit" onclick="submitWriteup()">UNLOCK</button>
+            <button class="modal-btn modal-btn-submit" onclick="downloadWriteup()" title="Download writeup as markdown file">⬇ DOWNLOAD</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeWriteupModal()">CANCEL</button>
+        </div>
+        <div id="password-error" class="modal-error"></div>
+    </div>
+</div>
+
+<script>
+function submitFlag() {
+    const flagInput = document.getElementById('flag-input');
+    const flag = flagInput.value.trim();
+    const messageDiv = document.getElementById('message');
+    
+    if (!flag) {
+        messageDiv.innerHTML = '<div class="submission-message submission-error">⚠ Please enter a flag</div>';
+        return;
+    }
+    
+    fetch('{{ url_for("submit_flag") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            challenge_id: {{ challenge.id }},
+            flag: flag
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.innerHTML = `<div class="submission-message submission-success">✓ ${data.message}</div>`;
+            flagInput.disabled = true;
+            document.querySelector('.flag-input-group button').disabled = true;
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            messageDiv.innerHTML = `<div class="submission-message submission-error">✗ ${data.message}</div>`;
+            flagInput.value = '';
+            flagInput.focus();
+        }
+    })
+    .catch(error => {
+        messageDiv.innerHTML = '<div class="submission-message submission-error">⚠ Error submitting flag</div>';
+        console.error('Error:', error);
+    });
+}
+
+function openWriteupModal() {
+    document.getElementById('writeupModal').classList.add('active');
+    document.getElementById('writeup-password').focus();
+}
+
+function closeWriteupModal() {
+    document.getElementById('writeupModal').classList.remove('active');
+    document.getElementById('writeup-password').value = '';
+    document.getElementById('password-error').textContent = '';
+}
+
+function submitWriteup() {
+    const password = document.getElementById('writeup-password').value;
+    const errorDiv = document.getElementById('password-error');
+    errorDiv.textContent = '';
+    
+    if (!password) {
+        errorDiv.textContent = 'Please enter a password';
+        return;
+    }
+    
+    fetch('{{ url_for("get_writeup", challenge_id=challenge.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const writeupDiv = document.getElementById('writeup-content');
+            writeupDiv.innerHTML = `<div class="writeup-content">${data.writeup.replace(/\n/g, '<br>')}</div>`;
+            closeWriteupModal();
+        } else {
+            errorDiv.textContent = '❌ ' + data.error;
+            document.getElementById('writeup-password').value = '';
+        }
+    })
+    .catch(error => {
+        errorDiv.textContent = 'Error accessing writeup';
+        console.error('Error:', error);
+    });
+}
+
+function downloadWriteup() {
+    const password = document.getElementById('writeup-password').value;
+    const errorDiv = document.getElementById('password-error');
+    errorDiv.textContent = '';
+    
+    if (!password) {
+        errorDiv.textContent = 'Please enter a password';
+        return;
+    }
+    
+    fetch('{{ url_for("download_writeup", challenge_id=challenge.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: password })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.blob();
+        } else {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Download failed');
+            });
+        }
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `{{ challenge.title.replace(' ', '_') }}_WRITEUP.md`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
+    .catch(error => {
+        errorDiv.textContent = '❌ ' + error.message;
+        console.error('Error:', error);
+    });
+}
+
+// Allow submitting with Enter key
+document.getElementById('flag-input')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') submitFlag();
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('writeupModal');
+    if (event.target == modal) {
+        closeWriteupModal();
+    }
+}
+</script>
+{% endblock %}

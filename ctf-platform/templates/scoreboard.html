@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Scoreboard - ATURKREATIF 26 WORKSHOP{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes rankPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @keyframes medalFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-5px) rotate(5deg); }
+    }
+    
+    @keyframes countUp {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .scoreboard-header {
+        background: var(--white);
+        border-radius: 0;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        border: 3px solid var(--bright-red);
+        border-top: 6px solid var(--bright-blue);
+        box-shadow: 6px 6px 0px rgba(0, 51, 255, 0.2);
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .scoreboard-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--bright-red);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .scoreboard-header h1::before {
+        content: '█ ';
+        color: var(--bright-blue);
+    }
+    
+    .scoreboard-header p {
+        color: var(--bright-red);
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .scoreboard-table {
+        background: var(--white);
+        border-radius: 0;
+        overflow: hidden;
+        border: 3px solid var(--bright-red);
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.2);
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .scoreboard-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .scoreboard-table th {
+        background: linear-gradient(90deg, rgba(160, 38, 43, 0.1) 0%, rgba(0, 51, 255, 0.1) 100%);
+        color: var(--bright-red);
+        padding: 1.5rem;
+        text-align: left;
+        font-weight: 700;
+        border-bottom: 3px solid var(--bright-red);
+        border-right: 2px solid var(--bright-blue);
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .scoreboard-table th:last-child {
+        border-right: none;
+    }
+    
+    .scoreboard-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        color: var(--dark-text);
+        transition: all 0.3s ease;
+    }
+    
+    .scoreboard-table td:last-child {
+        border-right: none;
+    }
+    
+    .scoreboard-table tr {
+        animation: countUp 0.6s ease-out forwards;
+    }
+    
+    .scoreboard-table tr:nth-child(1) { animation-delay: 0.1s; }
+    .scoreboard-table tr:nth-child(2) { animation-delay: 0.2s; }
+    .scoreboard-table tr:nth-child(3) { animation-delay: 0.3s; }
+    .scoreboard-table tr:nth-child(4) { animation-delay: 0.4s; }
+    .scoreboard-table tr:nth-child(5) { animation-delay: 0.5s; }
+    .scoreboard-table tr:nth-child(n+6) { animation-delay: 0.6s; }
+    
+    .scoreboard-table tr:hover {
+        background-color: rgba(0, 51, 255, 0.05);
+        box-shadow: inset 0 0 0 2px rgba(160, 38, 43, 0.1);
+    }
+    
+    .rank-cell {
+        font-weight: bold;
+        min-width: 80px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .rank-number {
+        color: var(--bright-red);
+        font-size: 1.1rem;
+        animation: rankPulse 2s ease-in-out infinite;
+        font-weight: 700;
+    }
+    
+    .medal {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        animation: medalFloat 3s ease-in-out infinite;
+        font-size: 1.5rem;
+    }
+    
+    .medal-1 {
+        animation-delay: 0s;
+    }
+    
+    .medal-2 {
+        animation-delay: 0.3s;
+    }
+    
+    .medal-3 {
+        animation-delay: 0.6s;
+    }
+    
+    .username {
+        font-weight: 700;
+        color: var(--bright-red);
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .team-name {
+        color: var(--dark-text);
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .score {
+        font-weight: 700;
+        color: var(--bright-blue);
+        font-size: 1.2rem;
+        font-family: 'Orbitron', sans-serif;
+    }
+    
+    .top-3-highlight {
+        background: linear-gradient(90deg, rgba(160, 38, 43, 0.05) 0%, rgba(0, 51, 255, 0.05) 100%);
+        border-left: 3px solid;
+    }
+    
+    .top-1 {
+        border-left-color: #ffd700;
+    }
+    
+    .top-2 {
+        border-left-color: #c0c0c0;
+    }
+    
+    .top-3 {
+        border-left-color: #cd7f32;
+    }
+    
+    .no-participants {
+        text-align: center;
+        padding: 3rem;
+        color: var(--dark-text);
+        font-style: italic;
+    }
+    
+    .scoreboard-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--dark-text);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .position-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .top-1 .position-indicator {
+        background-color: #ffd700;
+        box-shadow: 0 0 8px #ffd700;
+    }
+    
+    .top-2 .position-indicator {
+        background-color: #c0c0c0;
+        box-shadow: 0 0 8px #c0c0c0;
+    }
+    
+    .top-3 .position-indicator {
+        background-color: #cd7f32;
+        box-shadow: 0 0 8px #cd7f32;
+    }
+    
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 0;
+        border: 3px solid var(--bright-red);
+        border-left: 6px solid var(--bright-blue);
+        text-align: center;
+        box-shadow: 4px 4px 0px rgba(0, 51, 255, 0.1);
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    .stat-label {
+        color: var(--bright-red);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-value {
+        color: var(--bright-blue);
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: 'Orbitron', sans-serif;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scoreboard-header">
+    <h1>ATURKREATIF 26 LEADERBOARD</h1>
+    <p>Live rankings - may the best hacker win!</p>
+</div>
+
+{% if scoreboard %}
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-label">Total Participants</div>
+        <div class="stat-value">{{ scoreboard|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Top Score</div>
+        <div class="stat-value">{{ scoreboard[0][2] }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Average Score</div>
+        <div class="stat-value">{{ (scoreboard|map(attribute=2)|sum / scoreboard|length)|int }}</div>
+    </div>
+</div>
+{% endif %}
+
+<div class="scoreboard-table">
+    {% if scoreboard %}
+    <table>
+        <thead>
+            <tr>
+                <th>RANK</th>
+                <th>PLAYER</th>
+                <th>TEAM</th>
+                <th style="text-align: right;">SCORE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for username, team_name, score in scoreboard %}
+            <tr class="{% if loop.index <= 3 %}top-{{ loop.index }} top-3-highlight{% endif %}">
+                <td class="rank-cell">
+                    {% if loop.index == 1 %}
+                        <span class="position-indicator"></span><span class="medal medal-1">🥇</span>
+                    {% elif loop.index == 2 %}
+                        <span class="position-indicator"></span><span class="medal medal-2">🥈</span>
+                    {% elif loop.index == 3 %}
+                        <span class="position-indicator"></span><span class="medal medal-3">🥉</span>
+                    {% else %}
+                        <span class="rank-number">#{{ loop.index }}</span>
+                    {% endif %}
+                </td>
+                <td class="username">{{ username }}</td>
+                <td class="team-name">{{ team_name or '-' }}</td>
+                <td class="score" style="text-align: right;">{{ score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-participants">
+        <p>No participants yet. Register and start solving challenges!</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="scoreboard-footer">
+    🚩 Last updated: Live | Refresh to see latest scores
+</div>
+{% endblock %}
