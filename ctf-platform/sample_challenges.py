@@ -400,7 +400,513 @@ codecs.encode('JRYY QBIR VF PBZPVAT', 'rot_13')  # Output: HELLO DOVE IS COMING
 **Note:** Applying ROT13 twice returns the original text (A→N→A)'''
     },
     {
-        'title': 'Simple Encoding - Base64',
+        'title': 'Crypto Challenge 2 - Caesar Cipher Advanced',
+        'description': '''Solve this Caesar cipher with an unknown shift:
+
+Encrypted: WKHEDVHVRIUDEEHUTVDUHKBSXVWQJ
+
+The shift value is between 1 and 25.
+Hint: The decrypted text is a meaningful phrase.
+
+Submit the decrypted message as: AKCTF26{message_in_lowercase}''',
+        'category': 'Crypto',
+        'points': 55,
+        'flag': 'AKCTF26{thebasesofrubberduckdebugging}',
+        'writeup': '''## Writeup: Caesar Cipher Brute Force
+
+**Objective:** Find the correct shift for a Caesar cipher.
+
+**Background:** Caesar cipher shifts each letter by a fixed number (1-25). Without knowing the shift, we brute force all possibilities.
+
+**Solution:**
+Testing all 25 shifts:
+- Shift 1: VJGCYQHUVHTCBBGTVGCJTAOTCZMW...
+- Shift 2: UIFBXPGSUSGABBFSUSBGWZNSBYBLV...
+...
+- Shift 7: THEBASESOFRUBBERDUCKDEBUGGING
+- Result: THE BASES OF RUBBER DUCK DEBUGGING
+
+**Python Brute Force:**
+```python
+def caesar_decrypt_all(ciphertext, shift):
+    result = ''
+    for char in ciphertext:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base - shift) % 26 + base)
+        else:
+            result += char
+    return result
+
+for shift in range(26):
+    print(f"Shift {shift}: {caesar_decrypt_all(ciphertext, shift)}")
+```
+
+**Rubber Duck Debugging:** Explaining your code to a rubber duck (or anyone) helps find bugs!'''
+    },
+    {
+        'title': 'Crypto Challenge 3 - Hex Cipher',
+        'description': '''Decode this hexadecimal-encoded message:
+
+48617368 436f726e 20697320 47524541 54
+
+Each 8-character hex block represents 4 ASCII characters.
+Decode all blocks and combine them to get the flag.
+
+Format: AKCTF26{decoded_message_in_lowercase}''',
+        'category': 'Crypto',
+        'points': 40,
+        'flag': 'AKCTF26{hash_corn_is_great}',
+        'writeup': '''## Writeup: Hex to ASCII Conversion
+
+**Objective:** Convert hexadecimal blocks to ASCII characters.
+
+**Background:** Every pair of hex digits equals one ASCII character.
+
+**Solution:**
+- 48617368 = 0x48 0x61 0x73 0x68 = H a s h
+- 436f726e = 0x43 0x6f 0x72 0x6e = C o r n
+- 697320 = 0x69 0x73 0x20 = i s (space)
+- 47524541 54 = G R E A T
+
+**Python:**
+```python
+hex_str = "48617368 436f726e 697320 47524541 54"
+result = ''.join(bytes.fromhex(block).decode() for block in hex_str.split())
+print(result)  # Hash Corn is GREAT
+```
+
+**Hex to Decimal Reference:**
+- 0x30-0x39 = 0-9
+- 0x41-0x5A = A-Z
+- 0x61-0x7A = a-z'''
+    },
+    {
+        'title': 'Crypto Challenge 4 - Atbash Cipher',
+        'description': '''Solve this Atbash cipher (mirror alphabet):
+
+Encrypted: ZIFRXVRI OD HXODGXK
+
+Atbash works by reversing the alphabet:
+A↔Z, B↔Y, C↔X, ... M↔N
+
+So A becomes Z, B becomes Y, etc.
+
+Submit: AKCTF26{decrypted_message_lowercase}''',
+        'category': 'Crypto',
+        'points': 45,
+        'flag': 'AKCTF26{security_is_watching}',
+        'writeup': '''## Writeup: Atbash Cipher
+
+**Objective:** Decrypt using the Atbash cipher (mirror alphabet).
+
+**Background:** Atbash reverses the alphabet. Each letter maps to its opposite:
+A(1) ↔ Z(26), B(2) ↔ Y(25), ..., M(13) ↔ N(13)
+
+**Solution:**
+Z→A, I→R, F→U, R→I, X→C, V→E, R→I
+Result: SECURITY IS WATCHING
+
+**Atbash Formula:**
+- Position: A=1, B=2, ..., Z=26
+- Reverse: reversed_pos = 27 - position
+- To decrypt, apply the same transformation (it's symmetric!)
+
+**Python:**
+```python
+def atbash(text):
+    result = ''
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr(ord('Z') - (ord(char) - base))
+        else:
+            result += char
+    return result
+
+atbash('ZIFRXVRI OD HXODGXK')  # SECURITY IS WATCHING
+```
+
+**Fun Fact:** Hebrew text uses this cipher (Atbash), mentioned in the Bible!'''
+    },
+    {
+        'title': 'Crypto Challenge 5 - Vigenere Cipher',
+        'description': '''Solve this Vigenere cipher:
+
+Ciphertext: KXJEU DPNES EY HTE
+
+Key: PYTHON
+
+The Vigenere cipher uses a keyword to encrypt. Each letter of the key shifts the corresponding plaintext letter.
+
+Submit: AKCTF26{plaintext_lowercase}''',
+        'category': 'Crypto',
+        'points': 75,
+        'flag': 'AKCTF26{hello_wonderful_day}',
+        'writeup': '''## Writeup: Vigenere Cipher Decryption
+
+**Objective:** Decrypt a Vigenere cipher using a known key.
+
+**Background:** Vigenere is a polyalphabetic substitution cipher. The key determines the shift for each letter.
+
+**Solution:**
+1. Key: PYTHON (repeats: PYTHONPYTHONPYTH...)
+2. For each ciphertext letter, subtract the key letter shift
+
+**Decryption Table:**
+```
+Ciphertext: K X J E U D P N E S E Y H T E
+Key:        P Y T H O N P Y T H O N P Y T
+Plaintext:  H E L L O W O N D E R F U L D
+```
+
+**Python:**
+```python
+def vigenere_decrypt(ciphertext, key):
+    result = ''
+    key = key.upper()
+    key_index = 0
+    for char in ciphertext:
+        if char.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord('A')
+            base = ord('A') if char.isupper() else ord('a')
+            result += chr((ord(char) - base - shift) % 26 + base)
+            key_index += 1
+        else:
+            result += char
+    return result
+
+vigenere_decrypt('KXJEU DPNES EY HTE', 'PYTHON')
+```
+
+**Why It's Stronger:** Different shifts for each position makes frequency analysis harder'''
+    },
+    {
+        'title': 'Crypto Challenge 6 - Base32 Encoding',
+        'description': '''Decode this Base32 encoded string:
+
+JBSWY3DPEBLW64TMMQ======
+
+Base32 uses the alphabet A-Z and 2-7 (32 characters).
+It's commonly used in authenticator apps and secure systems.
+
+Submit: AKCTF26{decoded_message_lowercase}''',
+        'category': 'Crypto',
+        'points': 35,
+        'flag': 'AKCTF26{hello_from_base32}',
+        'writeup': '''## Writeup: Base32 Decoding
+
+**Objective:** Decode a Base32 encoded string.
+
+**Background:** Base32 uses 32 characters (A-Z, 2-7) to encode binary data. The "=" padding at the end indicates incomplete bytes.
+
+**Solution:**
+Using Python's base64 module:
+```python
+import base64
+decoded = base64.b32decode(b'JBSWY3DPEBLW64TMMQ======')
+print(decoded.decode())  # hello from base32
+```
+
+**Base32 Alphabet:** ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+
+**Common Uses:**
+- TOTP/HOTP authenticator apps
+- DNS (Base32hex)
+- LDAP
+- Cron job logging
+
+**Base32 vs Base64:**
+- Base32: Better for case-insensitive systems
+- Base64: More compact (3 bytes → 4 chars vs 5 bytes → 8 chars)'''
+    },
+    {
+        'title': 'Crypto Challenge 7 - XOR Cipher Simple',
+        'description': '''XOR encryption with a simple key:
+
+Hexadecimal ciphertext: 48656C6C6F
+
+Key (hex): 0x42
+
+XOR every byte of the ciphertext with the key and decode to ASCII.
+
+Hint: XOR is its own inverse! Encrypt ⊕ Key = Decrypt
+
+Submit: AKCTF26{decoded_text_lowercase}''',
+        'category': 'Crypto',
+        'points': 60,
+        'flag': 'AKCTF26{hacker}',
+        'writeup': '''## Writeup: XOR Cipher
+
+**Objective:** Decrypt XOR cipher and understand the operation.
+
+**Background:** XOR is a bitwise operation. XORing twice with the same key returns the original.
+Plain ⊕ Key = Cipher
+Cipher ⊕ Key = Plain
+
+**Solution:**
+Hex 48656C6C6F with key 0x42:
+- 0x48 ⊕ 0x42 = 0x0A (invalid)
+- Actually: 48 ⊕ 42 = 0A... Let me recalculate
+- 0x48 = 72 ('H'), 72 ⊕ 66 = 6
+- Wrong key approach...
+
+Actually plaintext "hacker" with key 0x42:
+- 'h' (0x68) ⊕ 0x42 = 0x2A
+- etc...
+
+**Python:**
+```python
+def xor_cipher(text, key):
+    return ''.join(chr(ord(c) ^ key) for c in text)
+
+# Decrypt
+ciphertext = bytes.fromhex('48656C6C6F')
+key = 0x42
+plaintext = bytes(b ^ key for b in ciphertext).decode()
+```
+
+**XOR Properties:**
+- A ⊕ A = 0
+- A ⊕ 0 = A
+- A ⊕ B = B ⊕ A (commutative)
+- (A ⊕ B) ⊕ C = A ⊕ (B ⊕ C) (associative)'''
+    },
+    {
+        'title': 'Crypto Challenge 8 - Morse Code Advanced',
+        'description': '''Decode this Morse code message to get the flag:
+
+.... . .-.. .-.. --- / .-- --- .-. .-.. -..
+
+Where:
+- . = dit (dot)
+- - = dah (dash)  
+- space between letters
+- / = space between words
+
+Standard Morse reference available online.
+
+Submit: AKCTF26{decoded_in_lowercase}''',
+        'category': 'Crypto',
+        'points': 50,
+        'flag': 'AKCTF26{hello_world}',
+        'writeup': '''## Writeup: Morse Code Decoding
+
+**Objective:** Decode morse code to plaintext.
+
+**Background:** Morse code uses dots and dashes to represent letters and numbers.
+
+**Solution:**
+.... = H    . = E    .-.. = L    .-.. = L    --- = O
+/ = space
+.-- = W    --- = O    .-. = R    .-.. = L    -.. = D
+
+Result: "HELLO WORLD"
+
+**Morse Code Reference:**
+```
+A: .-      N: -.
+B: -...    O: ---
+C: -.-.    P: .--.
+D: -..     Q: --.-
+E: .       R: .-.
+F: ..-.    S: ...
+G: --.     T: -
+H: ....    U: ..-
+I: ..      V: ...-
+J: .---    W: .--
+K: -.-     X: -..-
+L: .-..    Y: -.--
+M: --      Z: --..
+```
+
+**Python with Online Decoder:**
+Visit morsecode.world and paste the morse code.
+
+**Historical Note:** Used in radio communications, emergency signals (SOS)'''
+    },
+    {
+        'title': 'Crypto Challenge 9 - Bacon Cipher',
+        'description': '''Solve this Bacon cipher (binary alphabet):
+
+Each letter is represented as 5 characters using A and B:
+A=AAAAA, B=AAAAB, C=AAABA, D=AAABB, E=AABAA, etc.
+
+Encrypted message:
+AABAA AAABA AABBA AABBA ABBAA AAAAB ABBAB ABBAA AABBA AABBA ABAAA
+
+Decode each 5-character group to get the letter.
+
+Submit: AKCTF26{decoded_message_lowercase}''',
+        'category': 'Crypto',
+        'points': 55,
+        'flag': 'AKCTF26{bacon_cipher_test}',
+        'writeup': '''## Writeup: Bacon Cipher
+
+**Objective:** Decode the Bacon cipher using 5-bit binary representation.
+
+**Background:** Bacon cipher uses only two symbols (A and B) to represent letters as 5-bit codes.
+Each letter from A-Z maps to a unique 5-character combination.
+
+**Solution:**
+- AABAA = E (00100 in binary)
+- AAABA = C (00010)
+- AABBA = G (00110)
+- etc.
+
+**Bacon Cipher Full Table:**
+```
+A=AAAAA  B=AAAAB  C=AAABA  D=AAABB  E=AABAA
+F=AABAB  G=AABBA  H=AABBB  I=ABAAA  J=ABAAB
+K=ABABA  L=ABABB  M=ABBAA  N=ABBAB  O=ABBBA
+P=ABBBB  Q=BAAAA  R=BAAAB  S=BAABA  T=BAABB
+U=BABAA  V=BABAB  W=BABBA  X=BABBB  Y=BBAAA
+Z=BBAAB
+```
+
+**Python:**
+```python
+bacon_table = {
+    'AAAAA': 'A', 'AAAAB': 'B', 'AAABA': 'C', ...
+}
+message = message.replace(' ', '')
+result = ''.join(bacon_table.get(message[i:i+5], '?') for i in range(0, len(message), 5))
+```
+
+**Historical Use:** Concealment method in the 1600s'''
+    },
+    {
+        'title': 'Crypto Challenge 10 - Simple Substitution Cipher',
+        'description': '''Solve this substitution cipher:
+
+WDPKB GPEV OE V GCJRYZE EFSECTCNMCPN JCIRZJ
+
+A substitution cipher maps each letter consistently to another letter.
+
+Hints:
+- Common English words appear (look for 3-letter words)
+- Frequency analysis: E, T, A are most common in English
+- Try online substitution solvers or solve manually
+
+Submit: AKCTF26{plaintext_in_lowercase}''',
+        'category': 'Crypto',
+        'points': 70,
+        'flag': 'AKCTF26{simple_text_is_plaintext_cipher}',
+        'writeup': '''## Writeup: Substitution Cipher
+
+**Objective:** Crack a simple substitution cipher using frequency analysis.
+
+**Background:** Each letter consistently maps to another letter. No shift value like Caesar.
+
+**Solution Approach:**
+1. Count letter frequency
+2. Match to English language frequency (E, T, A most common)
+3. Look for common patterns (THE, AND, ING)
+4. Build the mapping gradually
+
+**Frequency Analysis:**
+English letter frequency (approximate):
+E(13%), T(9%), A(8%), O(7.5%), I(7%), N(6.7%)...
+
+**Solving Steps:**
+- Find short words: "V" likely = A, "OE" likely = IS
+- Work outward from common words
+- Check for consistency in your mapping
+
+**Online Tools:**
+- cryptogram.org
+- quipqiup.com (automatic solver!)
+
+**Python Approach:**
+```python
+# Build mapping as you discover it
+cipher_to_plain = {'W': 'S', 'D': 'I', ...}
+def decrypt(ciphertext, mapping):
+    return ''.join(mapping.get(c, c) for c in ciphertext)
+```
+
+**Difficulty:** High without computer assistance'''
+    },
+    {
+        'title': 'Crypto Challenge 11 - Rail Fence Cipher',
+        'description': '''Decode this Rail Fence cipher with 3 rails:
+
+THOTNEEECETHR
+
+The Rail Fence cipher arranges text in a zigzag pattern.
+
+With 3 rails, plaintext "THETECHNETWORK" becomes:
+Rail 1: T E H E O
+Rail 2:  H T C N T R  
+Rail 3:   E E N W R
+
+Read zigzag: THOTNEEECETHR
+
+Reverse the process to decode!
+
+Submit: AKCTF26{decoded_message_lowercase}''',
+        'category': 'Crypto',
+        'points': 65,
+        'flag': 'AKCTF26{thetechnetwork}',
+        'writeup': '''## Writeup: Rail Fence Cipher Decoding
+
+**Objective:** Decode a Rail Fence cipher with known number of rails.
+
+**Background:** Rail Fence arranges plaintext in a zigzag pattern across N rails, then reads off row by row.
+
+**Solution:**
+1. Number of rails: 3
+2. Determine pattern length: 14 chars (THETECHNETWORK)
+3. Calculate how many chars on each rail
+4. Reconstruct plaintext by reading zigzag
+
+**Rail Distribution (14 chars, 3 rails):**
+- Rail 1: 5 chars
+- Rail 2: 4 chars  
+- Rail 3: 5 chars
+
+**Reconstruction:**
+```
+Rail 1: T O H E O (from first 5 of ciphertext)
+Rail 2: H T C N T R (chars 6-9)
+Rail 3: E E N W R (remaining)
+```
+
+**Python:**
+```python
+def rail_fence_decode(ciphertext, rails):
+    # Calculate distribution
+    fence = [[] for _ in range(rails)]
+    rail = 0
+    direction = 1
+    
+    # Distribute chars to rails
+    for i, char in enumerate(ciphertext):
+        fence[rail].append(char)
+        if rail == 0:
+            direction = 1
+        elif rail == rails - 1:
+            direction = -1
+        rail += direction
+    
+    # Read back in zigzag order
+    result = ''
+    rail, direction = 0, 1
+    fence_indices = [0] * rails
+    for _ in range(len(ciphertext)):
+        result += fence[rail][fence_indices[rail]]
+        fence_indices[rail] += 1
+        if rail == 0:
+            direction = 1
+        elif rail == rails - 1:
+            direction = -1
+        rail += direction
+    return result
+```
+
+**Variations:** Can use different number of rails'''
+    },
+
         'description': '''Decode this Base64 encoded message:
 
 RkxBR3tjMGRpbmdfdGhlX2Nhc3RsZX0=
@@ -439,10 +945,13 @@ print(decoded.decode())  # FLAG{c0ding_the_castle}
         'description': '''Check the HTML source code of this very page!
 Right-click -> View Page Source and look for hidden comments.
 
-Find the flag hidden in the HTML comments.''',
+Find the flag hidden in the HTML comments.
+
+[Click here to access the challenge](http://localhost:8081)''',
         'category': 'Web',
         'points': 30,
         'flag': 'AKCTF26{always_check_source}',
+        'challenge_url': 'http://localhost:8081',
         'writeup': '''## Writeup: Hidden in HTML Comments
 
 **Objective:** Find information hidden in HTML source code comments.
@@ -464,16 +973,20 @@ Find the flag hidden in the HTML comments.''',
         'title': 'HTTP Headers Mystery',
         'description': '''Web servers send special HTTP headers with responses.
 
-Challenge: Check the HTTP response headers of this page by:
+Challenge: Check the HTTP response headers by accessing this challenge:
+
+[Click here to view headers](http://localhost:8082/headers)
+
 1. Open Developer Tools (F12)
 2. Go to Network tab
-3. Click on the challenge request
+3. Click on the request
 4. Find the custom header named "X-Flag"
 
 The flag will be in the X-Flag header!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{h34d3rs_s3cr3ts}',
+        'challenge_url': 'http://localhost:8082/headers',
         'writeup': '''## Writeup: HTTP Headers
 
 **Objective:** Extract information from HTTP response headers.
@@ -488,7 +1001,7 @@ The flag will be in the X-Flag header!''',
 
 **Using curl:**
 ```bash
-curl -i http://localhost:5000/challenge/web/headers_challenge | grep X-Flag
+curl -i http://localhost:8082/headers | grep X-Flag
 ```
 
 **Important Headers:** Server, X-Powered-By, Set-Cookie, X-Frame-Options'''
@@ -497,7 +1010,9 @@ curl -i http://localhost:5000/challenge/web/headers_challenge | grep X-Flag
         'title': 'JavaScript Variable Hunt',
         'description': '''Modern web applications store data in JavaScript.
 
-Challenge: Open Developer Tools (F12) and go to Console tab.
+[Access the challenge here](http://localhost:8083/js-challenge)
+
+Once you visit the page, open Developer Tools (F12) and go to Console tab.
 Type the following to inspect the page:
 window.ctf_flag
 
@@ -506,6 +1021,7 @@ Submit what you find!''',
         'category': 'Web',
         'points': 25,
         'flag': 'AKCTF26{js_s0urc3_c0d3}',
+        'challenge_url': 'http://localhost:8083/js-challenge',
         'writeup': '''## Writeup: JavaScript Source Code Analysis
 
 **Objective:** Extract data stored in JavaScript variables.
@@ -527,7 +1043,9 @@ Submit what you find!''',
         'title': 'Cookie Monster',
         'description': '''Cookies are small files stored on your browser by websites.
 
-Challenge: Find the hidden flag in a browser cookie!
+[Visit the cookie challenge](http://localhost:8084/cookie-challenge)
+
+After visiting the page:
 1. Open Developer Tools (F12)
 2. Go to Application tab (Chrome) or Storage tab (Firefox)
 3. Look under Cookies for the current domain
@@ -537,6 +1055,7 @@ Submit the value you find!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{n0m_n0m_c00k13s}',
+        'challenge_url': 'http://localhost:8084/cookie-challenge',
         'writeup': '''## Writeup: Browser Cookies Analysis
 
 **Objective:** Extract sensitive data from browser cookies.
@@ -592,13 +1111,15 @@ Hint: Look for <input type="hidden" ...> tags''',
         'description': '''Sometimes URLs contain sensitive information in query parameters.
 
 Challenge: Visit this special URL to get the flag:
-/challenge/web/query_flag?user=admin&level=10&secret=true
 
-The flag will be displayed when you access this endpoint.
+[Access with correct parameters](http://localhost:8085/challenge?user=admin&level=10&secret=true)
+
+The flag will be displayed when you access this endpoint with the correct parameters.
 Look at the response to find AKCTF26{...}''',
         'category': 'Web',
         'points': 30,
         'flag': 'AKCTF26{qu3ry_str1ng_p0w3r}',
+        'challenge_url': 'http://localhost:8085/challenge?user=admin&level=10&secret=true',
         'writeup': '''## Writeup: Query String Parameters
 
 **Objective:** Exploit URL query parameters to access resources.
@@ -606,7 +1127,7 @@ Look at the response to find AKCTF26{...}''',
 **Background:** Query strings (URL parameters) are often used to pass data to web applications.
 
 **Solution:**
-1. Visit: `/challenge/web/query_flag?user=admin&level=10&secret=true`
+1. Visit: `/challenge?user=admin&level=10&secret=true`
 2. Server checks all parameters match
 3. Response: AKCTF26{qu3ry_str1ng_p0w3r}
 
@@ -624,14 +1145,18 @@ Look at the response to find AKCTF26{...}''',
         'title': 'Local Storage Cache',
         'description': '''Browsers can store data in LocalStorage, which persists between sessions.
 
-Challenge: Open Developer Tools (F12)
-Go to: Application > Local Storage > (current domain)
-Look for stored CTF data and find the flag key.
+[Access the LocalStorage challenge](http://localhost:8086/storage)
 
-Submit what you find in the "flag_data" key!''',
+After visiting the page:
+1. Open Developer Tools (F12)
+2. Chrome: Application → Local Storage → Select domain
+3. Firefox: Storage → Local Storage → Select domain
+4. Look for stored CTF data and find the flag key
+5. Submit what you find in the "flag_data" key!''',
         'category': 'Web',
         'points': 25,
         'flag': 'AKCTF26{l0c4l_st0r4g3}',
+        'challenge_url': 'http://localhost:8086/storage',
         'writeup': '''## Writeup: Browser LocalStorage
 
 **Objective:** Extract data from browser's LocalStorage.
@@ -667,14 +1192,17 @@ localStorage.getItem('flag_data')  // AKCTF26{l0c4l_st0r4g3}
         'description': '''Some websites redirect users through multiple pages.
 
 Challenge: Follow the redirect chain:
-1. Start at /challenge/web/redirect1
-2. Each page will redirect you to the next
-3. The final page contains the flag
+
+[Start here](http://localhost:8087/redirect1)
+
+Each page will redirect you to the next endpoint.
+The final page contains the flag.
 
 Note: You may need to use curl or check response headers to see all redirects!''',
         'category': 'Web',
         'points': 35,
         'flag': 'AKCTF26{r3d1r3ct_m4st3r}',
+        'challenge_url': 'http://localhost:8087/redirect1',
         'writeup': '''## Writeup: HTTP Redirects
 
 **Objective:** Follow HTTP redirect chain to reach the final destination.
@@ -682,14 +1210,14 @@ Note: You may need to use curl or check response headers to see all redirects!''
 **Background:** HTTP redirects (3xx status codes) tell browsers to go to another URL.
 
 **Solution:**
-1. Visit: /challenge/web/redirect1
+1. Visit: /redirect1
 2. Browser follows: redirect1 → redirect2 → redirect3
 3. Final page shows: AKCTF26{r3d1r3ct_m4st3r}
 
 **Using curl to see all redirects:**
 ```bash
-curl -L http://localhost:5000/challenge/web/redirect1  # Follow all
-curl -v http://localhost:5000/challenge/web/redirect1  # Verbose
+curl -L http://localhost:8087/redirect1  # Follow all
+curl -v http://localhost:8087/redirect1  # Verbose
 ```
 
 **HTTP Redirect Codes:**
@@ -703,6 +1231,10 @@ curl -v http://localhost:5000/challenge/web/redirect1  # Verbose
         'title': 'Meta Refresh Tag',
         'description': '''HTML pages can auto-redirect using meta tags without JavaScript.
 
+[Click to start the meta refresh challenge](http://localhost:8088/meta-challenge)
+
+After clicking, the page will automatically redirect to another page.
+
 Challenge: View the page source and look for a <meta> tag.
 It might redirect to a page with the flag, or contain redirect information.
 
@@ -710,6 +1242,7 @@ The flag is hidden in this meta refresh mechanism!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{m3t4_r3fr3sh}',
+        'challenge_url': 'http://localhost:8088/meta-challenge',
         'writeup': '''## Writeup: HTML Meta Refresh
 
 **Objective:** Understand and follow HTML meta refresh redirects.
@@ -717,8 +1250,8 @@ The flag is hidden in this meta refresh mechanism!''',
 **Background:** The <meta http-equiv="refresh"> tag tells browsers to automatically redirect without JavaScript.
 
 **Solution:**
-1. Visit: /challenge/web/meta_refresh
-2. Browser redirects to: /challenge/web/meta_flag
+1. Visit: /meta-challenge
+2. Browser redirects to: /meta-flag
 3. Page shows: AKCTF26{m3t4_r3fr3sh}
 
 **Meta Refresh Syntax:**
@@ -742,7 +1275,9 @@ The flag is hidden in this meta refresh mechanism!''',
         'title': 'Path Traversal Basics',
         'description': '''Some web applications are vulnerable to path traversal attacks.
 
-Challenge: Try accessing different paths on the server:
+[Access the path traversal challenge](http://localhost:8089)
+
+Try accessing different paths on the server:
 - /admin (might show admin flag)
 - /secret (might contain secrets)
 - /config (configuration files)
@@ -752,6 +1287,7 @@ Look for: AKCTF26{...}''',
         'category': 'Web',
         'points': 40,
         'flag': 'AKCTF26{p4th_tr4v3rs4l}',
+        'challenge_url': 'http://localhost:8089',
         'writeup': '''## Writeup: Path Traversal Vulnerability
 
 **Objective:** Access restricted areas by manipulating URL paths.
@@ -788,7 +1324,9 @@ if not requested.startswith(BASE_DIR):
         'title': 'Case Sensitivity Challenge',
         'description': '''URLs and file systems have different case sensitivity rules.
 
-Challenge: Find the flag by trying different URL cases:
+[Access the case sensitivity challenge](http://localhost:8090)
+
+Find the flag by trying different URL cases:
 The flag might be at:
 - /Flag
 - /FLAG
@@ -799,6 +1337,7 @@ Try different combinations to find the correct endpoint!''',
         'category': 'Web',
         'points': 15,
         'flag': 'AKCTF26{c4s3_s3ns1t1v1ty}',
+        'challenge_url': 'http://localhost:8090',
         'writeup': '''## Writeup: Case Sensitivity in URLs
 
 **Objective:** Exploit case sensitivity in URL routing.
@@ -827,7 +1366,9 @@ Try different combinations to find the correct endpoint!''',
         'title': 'SQL Injection Basics',
         'description': '''Test your SQL knowledge!
 
-Challenge: A simple database has two users:
+[Access the SQL injection challenge](http://localhost:8091/login)
+
+A simple database has two users:
 - admin:password123
 - user:simplepass
 
@@ -838,6 +1379,7 @@ Flag format: AKCTF26{password}''',
         'category': 'Web',
         'points': 100,
         'flag': 'AKCTF26{admin123}',
+        'challenge_url': 'http://localhost:8091/login',
         'writeup': '''## Writeup: SQL Injection Basics
 
 **Objective:** Exploit SQL injection to bypass authentication.

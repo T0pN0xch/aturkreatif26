@@ -42,6 +42,7 @@ class Challenge(db.Model):
     points = db.Column(db.Integer, default=100)
     category = db.Column(db.String(80), default='General')
     writeup = db.Column(db.Text, default='')
+    challenge_url = db.Column(db.String(500), default='')  # For web challenges with custom ports
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
