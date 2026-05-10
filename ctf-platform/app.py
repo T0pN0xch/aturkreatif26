@@ -6,6 +6,7 @@ from models import db, User, Challenge, Submission
 from datetime import datetime
 import os
 from io import BytesIO
+from web_challenges import web_challenges
 
 def create_app(config_name='development'):
     """Application factory"""
@@ -658,6 +659,9 @@ API_KEY=sk-1234567890abcdef
             'challenge_id': challenge.id,
             'message': 'Challenge added successfully'
         })
+    
+    # Register blueprints
+    app.register_blueprint(web_challenges)
     
     return app
 

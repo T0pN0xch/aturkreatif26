@@ -952,7 +952,7 @@ Find the flag hidden in the HTML comments.
         'category': 'Web',
         'points': 30,
         'flag': 'AKCTF26{always_check_source}',
-        'challenge_url': 'http://localhost:8081',
+        'challenge_url': '/web-challenges/comments',
         'writeup': '''## Writeup: Hidden in HTML Comments
 
 **Objective:** Find information hidden in HTML source code comments.
@@ -987,7 +987,7 @@ The flag will be in the X-Flag header!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{h34d3rs_s3cr3ts}',
-        'challenge_url': 'http://localhost:8082/headers',
+        'challenge_url': '/web-challenges/headers',
         'writeup': '''## Writeup: HTTP Headers
 
 **Objective:** Extract information from HTTP response headers.
@@ -1022,7 +1022,7 @@ Submit what you find!''',
         'category': 'Web',
         'points': 25,
         'flag': 'AKCTF26{js_s0urc3_c0d3}',
-        'challenge_url': 'http://localhost:8083/js-challenge',
+        'challenge_url': '/web-challenges/js-challenge',
         'writeup': '''## Writeup: JavaScript Source Code Analysis
 
 **Objective:** Extract data stored in JavaScript variables.
@@ -1056,7 +1056,7 @@ Submit the value you find!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{n0m_n0m_c00k13s}',
-        'challenge_url': 'http://localhost:8084/cookie-challenge',
+        'challenge_url': '/web-challenges/cookie-challenge',
         'writeup': '''## Writeup: Browser Cookies Analysis
 
 **Objective:** Extract sensitive data from browser cookies.
@@ -1120,7 +1120,7 @@ Look at the response to find AKCTF26{...}''',
         'category': 'Web',
         'points': 30,
         'flag': 'AKCTF26{qu3ry_str1ng_p0w3r}',
-        'challenge_url': 'http://localhost:8085/challenge?user=admin&level=10&secret=true',
+        'challenge_url': '/web-challenges/challenge?user=admin&level=10&secret=true',
         'writeup': '''## Writeup: Query String Parameters
 
 **Objective:** Exploit URL query parameters to access resources.
@@ -1157,7 +1157,7 @@ After visiting the page:
         'category': 'Web',
         'points': 25,
         'flag': 'AKCTF26{l0c4l_st0r4g3}',
-        'challenge_url': 'http://localhost:8086/storage',
+        'challenge_url': '/web-challenges/storage',
         'writeup': '''## Writeup: Browser LocalStorage
 
 **Objective:** Extract data from browser's LocalStorage.
@@ -1214,7 +1214,7 @@ Note: You may need to use curl or check response headers to see all redirects!''
         'category': 'Web',
         'points': 35,
         'flag': 'AKCTF26{r3d1r3ct_m4st3r}',
-        'challenge_url': 'http://localhost:8087/redirect1',
+        'challenge_url': '/web-challenges/redirect1',
         'writeup': '''## Writeup: HTTP Redirects
 
 **Objective:** Follow HTTP redirect chain to reach the final destination.
@@ -1254,7 +1254,7 @@ The flag is hidden in this meta refresh mechanism!''',
         'category': 'Web',
         'points': 20,
         'flag': 'AKCTF26{m3t4_r3fr3sh}',
-        'challenge_url': 'http://localhost:8088/meta-challenge',
+        'challenge_url': '/web-challenges/meta-challenge',
         'writeup': '''## Writeup: HTML Meta Refresh
 
 **Objective:** Understand and follow HTML meta refresh redirects.
@@ -1299,7 +1299,7 @@ Look for: AKCTF26{...}''',
         'category': 'Web',
         'points': 40,
         'flag': 'AKCTF26{p4th_tr4v3rs4l}',
-        'challenge_url': 'http://localhost:8089',
+        'challenge_url': '/web-challenges/file?path=secret.txt',
         'writeup': '''## Writeup: Path Traversal Vulnerability
 
 **Objective:** Access restricted areas by manipulating URL paths.
@@ -1349,7 +1349,7 @@ Try different combinations to find the correct endpoint!''',
         'category': 'Web',
         'points': 15,
         'flag': 'AKCTF26{c4s3_s3ns1t1v1ty}',
-        'challenge_url': 'http://localhost:8090',
+        'challenge_url': '/web-challenges/case/flag',
         'writeup': '''## Writeup: Case Sensitivity in URLs
 
 **Objective:** Exploit case sensitivity in URL routing.
@@ -1391,7 +1391,7 @@ Flag format: AKCTF26{password}''',
         'category': 'Web',
         'points': 100,
         'flag': 'AKCTF26{admin123}',
-        'challenge_url': 'http://localhost:8091/login',
+        'challenge_url': '/web-challenges/login',
         'writeup': '''## Writeup: SQL Injection Basics
 
 **Objective:** Exploit SQL injection to bypass authentication.
