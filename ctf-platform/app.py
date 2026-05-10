@@ -25,6 +25,20 @@ def create_app(config_name='development'):
     # Create database tables
     with app.app_context():
         db.create_all()
+        
+        # Auto-load sample challenges if database is empty
+        if Challenge.query.count() == 0:
+            try:
+                from sample_challenges import SAMPLE_CHALLENGES
+                print("📚 Loading sample challenges...")
+                for challenge_data in SAMPLE_CHALLENGES:
+                    challenge = Challenge(**challenge_data)
+                    db.session.add(challenge)
+                db.session.commit()
+                print(f"✅ Loaded {Challenge.query.count()} challenges!")
+            except Exception as e:
+                print(f"⚠️  Could not load challenges: {e}")
+                db.session.rollback()
     
     # ============ ROUTES ============
     
