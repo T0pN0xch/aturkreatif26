@@ -6,6 +6,7 @@ Run this script after installing dependencies and before starting the app.
 
 from app import create_app
 from models import db, User
+from sample_challenges import add_sample_challenges
 import secrets
 
 def init_database():
@@ -51,6 +52,13 @@ def main():
     create_admin = input("\nCreate admin user? (y/n): ").lower() == 'y'
     if create_admin:
         create_admin_user()
+    
+    load_samples = input("\nLoad sample challenges? (y/n): ").lower() == 'y'
+    if load_samples:
+        app = create_app()
+        with app.app_context():
+            print("\nLoading sample challenges...")
+            add_sample_challenges()
     
     print("\n✓ Setup complete! Run 'python app.py' to start the server.")
 
