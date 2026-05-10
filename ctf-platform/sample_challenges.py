@@ -948,7 +948,7 @@ Right-click -> View Page Source and look for hidden comments.
 
 Find the flag hidden in the HTML comments.
 
-[Click here to access the challenge](http://localhost:8081)''',
+[Click here to access the challenge](/web-challenges/comments)''',
         'category': 'Web',
         'points': 30,
         'flag': 'AKCTF26{always_check_source}',
@@ -976,7 +976,7 @@ Find the flag hidden in the HTML comments.
 
 Challenge: Check the HTTP response headers by accessing this challenge:
 
-[Click here to view headers](http://localhost:8082/headers)
+[Click here to view headers](/web-challenges/headers)
 
 1. Open Developer Tools (F12)
 2. Go to Network tab
@@ -1002,7 +1002,7 @@ The flag will be in the X-Flag header!''',
 
 **Using curl:**
 ```bash
-curl -i http://localhost:8082/headers | grep X-Flag
+curl -i http://localhost:5000/web-challenges/headers | grep X-Flag
 ```
 
 **Important Headers:** Server, X-Powered-By, Set-Cookie, X-Frame-Options'''
@@ -1011,7 +1011,7 @@ curl -i http://localhost:8082/headers | grep X-Flag
         'title': 'JavaScript Variable Hunt',
         'description': '''Modern web applications store data in JavaScript.
 
-[Access the challenge here](http://localhost:8083/js-challenge)
+[Access the challenge here](/web-challenges/js-challenge)
 
 Once you visit the page, open Developer Tools (F12) and go to Console tab.
 Type the following to inspect the page:
@@ -1044,7 +1044,7 @@ Submit what you find!''',
         'title': 'Cookie Monster',
         'description': '''Cookies are small files stored on your browser by websites.
 
-[Visit the cookie challenge](http://localhost:8084/cookie-challenge)
+[Visit the cookie challenge](/web-challenges/cookie-challenge)
 
 After visiting the page:
 1. Open Developer Tools (F12)
@@ -1113,7 +1113,7 @@ Hint: Look for <input type="hidden" ...> tags''',
 
 Challenge: Visit this special URL to get the flag:
 
-[Access with correct parameters](http://localhost:8085/challenge?user=admin&level=10&secret=true)
+[Access with correct parameters](/web-challenges/challenge?user=admin&level=10&secret=true)
 
 The flag will be displayed when you access this endpoint with the correct parameters.
 Look at the response to find AKCTF26{...}''',
@@ -1146,7 +1146,7 @@ Look at the response to find AKCTF26{...}''',
         'title': 'Local Storage Cache',
         'description': '''Browsers can store data in LocalStorage, which persists between sessions.
 
-[Access the LocalStorage challenge](http://localhost:8086/storage)
+[Access the LocalStorage challenge](/web-challenges/storage)
 
 After visiting the page:
 1. Open Developer Tools (F12)
@@ -1205,7 +1205,7 @@ Never store sensitive data in LocalStorage as it's accessible to JavaScript and 
 
 Challenge: Follow the redirect chain:
 
-[Start here](http://localhost:8087/redirect1)
+[Start here](/web-challenges/redirect1)
 
 Each page will redirect you to the next endpoint.
 The final page contains the flag.
@@ -1228,8 +1228,8 @@ Note: You may need to use curl or check response headers to see all redirects!''
 
 **Using curl to see all redirects:**
 ```bash
-curl -L http://localhost:8087/redirect1  # Follow all
-curl -v http://localhost:8087/redirect1  # Verbose
+curl -L http://localhost:5000/web-challenges/redirect1  # Follow all
+curl -v http://localhost:5000/web-challenges/redirect1  # Verbose
 ```
 
 **HTTP Redirect Codes:**
@@ -1243,7 +1243,7 @@ curl -v http://localhost:8087/redirect1  # Verbose
         'title': 'Meta Refresh Tag',
         'description': '''HTML pages can auto-redirect using meta tags without JavaScript.
 
-[Click to start the meta refresh challenge](http://localhost:8088/meta-challenge)
+[Click to start the meta refresh challenge](/web-challenges/meta-challenge)
 
 After clicking, the page will automatically redirect to another page.
 
@@ -1287,7 +1287,7 @@ The flag is hidden in this meta refresh mechanism!''',
         'title': 'Path Traversal Basics',
         'description': '''Some web applications are vulnerable to path traversal attacks.
 
-[Access the path traversal challenge](http://localhost:8089)
+[Access the path traversal challenge](/web-challenges/file?path=secret.txt)
 
 Try accessing different paths on the server:
 - /admin (might show admin flag)
@@ -1336,7 +1336,7 @@ if not requested.startswith(BASE_DIR):
         'title': 'Case Sensitivity Challenge',
         'description': '''URLs and file systems have different case sensitivity rules.
 
-[Access the case sensitivity challenge](http://localhost:8090)
+[Access the case sensitivity challenge](/web-challenges/case/flag)
 
 Find the flag by trying different URL cases:
 The flag might be at:
@@ -1378,7 +1378,7 @@ Try different combinations to find the correct endpoint!''',
         'title': 'SQL Injection Basics',
         'description': '''Test your SQL knowledge!
 
-[Access the SQL injection challenge](http://localhost:8091/login)
+[Access the SQL injection challenge](/web-challenges/login)
 
 A simple database has two users:
 - admin:password123
