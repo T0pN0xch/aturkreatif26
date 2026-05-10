@@ -31,11 +31,16 @@ def create_app(config_name='development'):
             try:
                 from sample_challenges import SAMPLE_CHALLENGES
                 print("📚 Loading sample challenges...")
+                added = 0
                 for challenge_data in SAMPLE_CHALLENGES:
-                    challenge = Challenge(**challenge_data)
-                    db.session.add(challenge)
+                    # Check if challenge already exists by title to prevent duplicates
+                    if not Challenge.query.filter_by(title=challenge_data['title']).first():
+                        challenge = Challenge(**challenge_data)
+                        db.session.add(challenge)
+                        added += 1
                 db.session.commit()
-                print(f"✅ Loaded {Challenge.query.count()} challenges!")
+                if added > 0:
+                    print(f"✅ Loaded {added} challenges!")
             except Exception as e:
                 print(f"⚠️  Could not load challenges: {e}")
                 db.session.rollback()
