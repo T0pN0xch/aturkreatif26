@@ -906,7 +906,8 @@ def rail_fence_decode(ciphertext, rails):
 
 **Variations:** Can use different number of rails'''
     },
-
+    {
+        'title': 'Crypto Challenge 12 - Base64 Encoding',
         'description': '''Decode this Base64 encoded message:
 
 RkxBR3tjMGRpbmdfdGhlX2Nhc3RsZX0=
@@ -1175,7 +1176,12 @@ After visiting the page:
 localStorage.getItem('flag_data')  // AKCTF26{l0c4l_st0r4g3}
 ```
 
-**LocalStorage Characteristics:**
+**Security:** LocalStorage is NOT secure, use SessionStorage or cookies with HttpOnly flag'''
+    },
+    {
+        'title': 'LocalStorage Characteristics',
+        'description': '''Learn about LocalStorage characteristics:
+
 - Persists until manually deleted
 - ~5-10MB per domain
 - Accessible via JavaScript
@@ -1185,7 +1191,13 @@ localStorage.getItem('flag_data')  // AKCTF26{l0c4l_st0r4g3}
 - Authentication tokens
 - API keys
 - Passwords
-- Personal information'''
+- Personal information''',
+        'category': 'Web',
+        'points': 20,
+        'flag': 'AKCTF26{localstorage_learning}',
+        'writeup': '''## LocalStorage Security
+
+Never store sensitive data in LocalStorage as it's accessible to JavaScript and XSS attacks.'''
     },
     {
         'title': 'Redirect Chain Master',
